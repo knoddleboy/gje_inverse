@@ -32,13 +32,23 @@ func InverseSerial(m *Matrix) (*Matrix, time.Duration, error) {
 			I.Data[i][c] /= pivot
 		}
 
-		for r := 0; r < n; r++ {
-			if r != i {
+		if i < n-1 {
+			for r := i + 1; r < n; r++ {
 				factor := m.Data[r][i]
 				for c := 0; c < n; c++ {
 					m.Data[r][c] -= factor * m.Data[i][c]
 					I.Data[r][c] -= factor * I.Data[i][c]
 				}
+			}
+		}
+	}
+
+	for i := n - 1; i >= 1; i-- {
+		for r := i - 1; r >= 0; r-- {
+			factor := m.Data[r][i]
+			for c := 0; c < n; c++ {
+				m.Data[r][c] -= factor * m.Data[i][c]
+				I.Data[r][c] -= factor * I.Data[i][c]
 			}
 		}
 	}

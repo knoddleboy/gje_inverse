@@ -1,6 +1,7 @@
 package gjeinverse
 
 import (
+	"sync"
 	"time"
 )
 
@@ -10,13 +11,13 @@ func InverseParallel(m *Matrix, threads int) (*Matrix, time.Duration, error) {
 	I := NewMatrix(n)
 	I.FillIdentity()
 
-	ch := make(chan int, threads)
+	var wg sync.WaitGroup
 
 	startTime := time.Now()
 
 	for i := 0; i < n; i++ {
 		if m.Data[i][i] == 0 {
-			for j := i + 1; j < n; j++ {
+			for j := i; j < n; j++ {
 				if m.Data[j][i] != 0 {
 					m.Swap(i, j)
 					break
@@ -34,25 +35,36 @@ func InverseParallel(m *Matrix, threads int) (*Matrix, time.Duration, error) {
 			I.Data[i][c] /= pivot
 		}
 
-		for gr := 0; gr < threads; gr++ {
-			go func(startRow, endRow int) {
-				for r := startRow; r < endRow; r++ {
-					if r != i {
-						factor := m.Data[r][i]
-						for c := 0; c < n; c++ {
-							m.Data[r][c] -= factor * m.Data[i][c]
-							I.Data[r][c] -= factor * I.Data[i][c]
-						}
+		if i < n-1 {
+			wg.Add(n - i - 1)
+			for r := i + 1; r < n; r++ {
+				go func(row int) {
+					defer wg.Done()
+					factor := m.Data[row][i]
+					for c := 0; c < n; c++ {
+						m.Data[row][c] -= factor * m.Data[i][c]
+						I.Data[row][c] -= factor * I.Data[i][c]
 					}
-				}
-				ch <- 1
-			}(gr*n/threads, (gr+1)*n/threads)
-		}
-
-		for gr := 0; gr < threads; gr++ {
-			<-ch
+				}(r)
+			}
+			wg.Wait()
 		}
 	}
+
+	wg.Add(n - 1)
+	for i := n - 1; i >= 1; i-- {
+		go func(i int) {
+			defer wg.Done()
+			for r := i - 1; r >= 0; r-- {
+				factor := m.Data[r][i]
+				for c := 0; c < n; c++ {
+					m.Data[r][c] -= factor * m.Data[i][c]
+					I.Data[r][c] -= factor * I.Data[i][c]
+				}
+			}
+		}(i)
+	}
+	wg.Wait()
 
 	return I, time.Since(startTime), nil
 }
