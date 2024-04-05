@@ -32,6 +32,7 @@ func InverseParallel(a *Matrix, threads int) (*Matrix, time.Duration, error) {
 					defer wg.Done()
 					factor := a.Data[row][i]
 					subtractRows(a.Data[row], a.Data[i], factor)
+					subtractRows(I.Data[row], I.Data[i], factor)
 				}(r)
 			}
 			wg.Wait()
@@ -45,6 +46,7 @@ func InverseParallel(a *Matrix, threads int) (*Matrix, time.Duration, error) {
 				defer wg.Done()
 				factor := a.Data[r][col]
 				subtractRows(a.Data[r], a.Data[col], factor)
+				subtractRows(I.Data[r], I.Data[col], factor)
 			}(i)
 		}
 		wg.Wait()

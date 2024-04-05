@@ -26,6 +26,7 @@ func InverseSerial(a *Matrix) (*Matrix, time.Duration, error) {
 			for r := i + 1; r < n; r++ {
 				factor := a.Data[r][i]
 				subtractRows(a.Data[r], a.Data[i], factor)
+				subtractRows(I.Data[r], I.Data[i], factor)
 			}
 		}
 	}
@@ -34,6 +35,7 @@ func InverseSerial(a *Matrix) (*Matrix, time.Duration, error) {
 		for r := i - 1; r >= 0; r-- {
 			factor := a.Data[r][i]
 			subtractRows(a.Data[r], a.Data[i], factor)
+			subtractRows(I.Data[r], I.Data[i], factor)
 		}
 	}
 
