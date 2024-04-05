@@ -4,8 +4,8 @@ import (
 	"time"
 )
 
-func InverseSerial(m *Matrix) (*Matrix, time.Duration, error) {
-	n := m.Dim
+func InverseSerial(a *Matrix) (*Matrix, time.Duration, error) {
+	n := a.Dim
 
 	I := NewMatrix(n)
 	I.FillIdentity()
@@ -13,27 +13,27 @@ func InverseSerial(m *Matrix) (*Matrix, time.Duration, error) {
 	startTime := time.Now()
 
 	for i := 0; i < n; i++ {
-		err := assertNonZeroPivot(m, I, i)
+		err := assertNonZeroPivot(a, I, i)
 		if err != nil {
 			panic(err)
 		}
 
-		pivot := m.Data[i][i]
-		normalizeRow(m.Data[i], pivot)
+		pivot := a.Data[i][i]
+		normalizeRow(a.Data[i], pivot)
 		normalizeRow(I.Data[i], pivot)
 
 		if i < n-1 {
 			for r := i + 1; r < n; r++ {
-				factor := m.Data[r][i]
-				subtractRows(m.Data[r], m.Data[i], factor)
+				factor := a.Data[r][i]
+				subtractRows(a.Data[r], a.Data[i], factor)
 			}
 		}
 	}
 
 	for i := n - 1; i >= 1; i-- {
 		for r := i - 1; r >= 0; r-- {
-			factor := m.Data[r][i]
-			subtractRows(m.Data[r], m.Data[i], factor)
+			factor := a.Data[r][i]
+			subtractRows(a.Data[r], a.Data[i], factor)
 		}
 	}
 

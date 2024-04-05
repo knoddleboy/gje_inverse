@@ -5,8 +5,8 @@ import (
 	"time"
 )
 
-func InverseParallel(m *Matrix, threads int) (*Matrix, time.Duration, error) {
-	n := m.Dim
+func InverseParallel(a *Matrix, threads int) (*Matrix, time.Duration, error) {
+	n := a.Dim
 
 	I := NewMatrix(n)
 	I.FillIdentity()
@@ -16,13 +16,13 @@ func InverseParallel(m *Matrix, threads int) (*Matrix, time.Duration, error) {
 	startTime := time.Now()
 
 	for i := 0; i < n; i++ {
-		err := assertNonZeroPivot(m, I, i)
+		err := assertNonZeroPivot(a, I, i)
 		if err != nil {
 			panic(err)
 		}
 
-		pivot := m.Data[i][i]
-		normalizeRow(m.Data[i], pivot)
+		pivot := a.Data[i][i]
+		normalizeRow(a.Data[i], pivot)
 		normalizeRow(I.Data[i], pivot)
 
 		if i < n-1 {
@@ -30,8 +30,8 @@ func InverseParallel(m *Matrix, threads int) (*Matrix, time.Duration, error) {
 			for r := i + 1; r < n; r++ {
 				go func(row int) {
 					defer wg.Done()
-					factor := m.Data[row][i]
-					subtractRows(m.Data[row], m.Data[i], factor)
+					factor := a.Data[row][i]
+					subtractRows(a.Data[row], a.Data[i], factor)
 				}(r)
 			}
 			wg.Wait()
@@ -43,8 +43,8 @@ func InverseParallel(m *Matrix, threads int) (*Matrix, time.Duration, error) {
 		for r := i - 1; r >= 0; r-- {
 			go func(col int) {
 				defer wg.Done()
-				factor := m.Data[r][col]
-				subtractRows(m.Data[r], m.Data[col], factor)
+				factor := a.Data[r][col]
+				subtractRows(a.Data[r], a.Data[col], factor)
 			}(i)
 		}
 		wg.Wait()

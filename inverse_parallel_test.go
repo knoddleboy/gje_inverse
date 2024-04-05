@@ -11,10 +11,10 @@ func TestInverseParallelIdentity(t *testing.T) {
 	fmt.Println("dim\ttime, s")
 
 	for _, dim := range TestDims {
-		m := NewMatrix(dim)
-		m.FillIdentity()
+		a := NewMatrix(dim)
+		a.FillIdentity()
 
-		inv, elapsed, err := InverseParallel(m, ThreadsTests)
+		inv, elapsed, err := InverseParallel(a, ThreadsTests)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -32,10 +32,10 @@ func TestInverseParallelRandom(t *testing.T) {
 	fmt.Println("dim\ttime, s")
 
 	for _, dim := range TestDims {
-		m := NewMatrix(dim)
-		m.Randomize()
+		a := NewMatrix(dim)
+		a.Randomize()
 
-		inv, elapsed, err := InverseParallel(m.Copy(), ThreadsTests)
+		inv, elapsed, err := InverseParallel(a.Copy(), ThreadsTests)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -47,7 +47,7 @@ func TestInverseParallelRandom(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		if !m.Equals(inv2) {
+		if !a.Equals(inv2) {
 			t.Fatal(ErrFailedToCompute)
 		}
 	}
@@ -59,10 +59,10 @@ func TestInverseParallelIdentitySeq(t *testing.T) {
 
 	for _, dim := range TestDims {
 		for i := 0; i < SeqTests; i++ {
-			m := NewMatrix(dim)
-			m.FillIdentity()
+			a := NewMatrix(dim)
+			a.FillIdentity()
 
-			inv, _, err := InverseParallel(m, ThreadsTests)
+			inv, _, err := InverseParallel(a, ThreadsTests)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -75,10 +75,10 @@ func TestInverseParallelIdentitySeq(t *testing.T) {
 		var totalTime time.Duration
 
 		for i := 0; i < SeqTests; i++ {
-			m := NewMatrix(dim)
-			m.FillIdentity()
+			a := NewMatrix(dim)
+			a.FillIdentity()
 
-			inv, elapsed, err := InverseParallel(m, ThreadsTests)
+			inv, elapsed, err := InverseParallel(a, ThreadsTests)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -101,10 +101,10 @@ func TestInverseParallelRandomSeq(t *testing.T) {
 
 	for _, dim := range TestDims {
 		for i := 0; i < SeqTests; i++ {
-			m := NewMatrix(dim)
-			m.Randomize()
+			a := NewMatrix(dim)
+			a.Randomize()
 
-			inv, _, err := InverseParallel(m.Copy(), ThreadsTests)
+			inv, _, err := InverseParallel(a.Copy(), ThreadsTests)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -114,7 +114,7 @@ func TestInverseParallelRandomSeq(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			if !m.Equals(inv2) {
+			if !a.Equals(inv2) {
 				t.Fatal(ErrFailedToCompute)
 			}
 		}
@@ -122,10 +122,10 @@ func TestInverseParallelRandomSeq(t *testing.T) {
 		var totalTime time.Duration
 
 		for i := 0; i < SeqTests; i++ {
-			m := NewMatrix(dim)
-			m.Randomize()
+			a := NewMatrix(dim)
+			a.Randomize()
 
-			inv, elapsed, err := InverseParallel(m.Copy(), ThreadsTests)
+			inv, elapsed, err := InverseParallel(a.Copy(), ThreadsTests)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -137,7 +137,7 @@ func TestInverseParallelRandomSeq(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			if !m.Equals(inv2) {
+			if !a.Equals(inv2) {
 				t.Fatal(ErrFailedToCompute)
 			}
 		}

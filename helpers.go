@@ -4,12 +4,12 @@ package gjeinverse
 // If the pivot is zero, it searches for a non-zero element in the same column below the current row,
 // swaps rows if found, and updates the corresponding rows in the identity matrix I.
 // Returns an error ErrSingularMatrix if no non-zero element is found below the current row.
-func assertNonZeroPivot(m, I *Matrix, r int) error {
-	n := m.Dim
-	if m.Data[r][r] == 0 {
+func assertNonZeroPivot(a, I *Matrix, r int) error {
+	n := a.Dim
+	if a.Data[r][r] == 0 {
 		for j := r; j < n; j++ {
-			if m.Data[j][r] != 0 {
-				m.Swap(r, j)
+			if a.Data[j][r] != 0 {
+				a.Swap(r, j)
 				I.Swap(r, j)
 				break
 			}
