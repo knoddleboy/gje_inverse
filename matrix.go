@@ -11,6 +11,8 @@ type Matrix struct {
 	Dim  int
 }
 
+// NewMatrix creates a new square matrix of dimension 'dim'.
+// It panics if 'dim' is less than or equal to zero.
 func NewMatrix(dim int) *Matrix {
 	if dim <= 0 {
 		panic(ErrNegativeDimension)
@@ -25,6 +27,7 @@ func NewMatrix(dim int) *Matrix {
 	}
 }
 
+// Randomize fills the matrix with random float64 values.
 func (a *Matrix) Randomize() {
 	for i := 0; i < a.Dim; i++ {
 		for j := 0; j < a.Dim; j++ {
@@ -33,6 +36,7 @@ func (a *Matrix) Randomize() {
 	}
 }
 
+// FillIdentity fills the matrix as an identity matrix.
 func (a *Matrix) FillIdentity() {
 	for i := 0; i < a.Dim; i++ {
 		for j := 0; j < a.Dim; j++ {
@@ -45,6 +49,7 @@ func (a *Matrix) FillIdentity() {
 	}
 }
 
+// Copy returns a deep copy of the matrix.
 func (a *Matrix) Copy() *Matrix {
 	n := a.Dim
 	copied := NewMatrix(n)
@@ -56,10 +61,12 @@ func (a *Matrix) Copy() *Matrix {
 	return copied
 }
 
+// Swap swaps two rows of the matrix.
 func (a *Matrix) Swap(i, j int) {
 	a.Data[i], a.Data[j] = a.Data[j], a.Data[i]
 }
 
+// IsIdentity checks if the matrix is an identity matrix.
 func (a *Matrix) IsIdentity() bool {
 	for i := 0; i < a.Dim; i++ {
 		for j := 0; j < a.Dim; j++ {
@@ -77,15 +84,17 @@ func (a *Matrix) IsIdentity() bool {
 	return true
 }
 
+// Equals checks if two matrices are equal within a certain tolerance.
 func (a *Matrix) Equals(o *Matrix) bool {
 	n := a.Dim
+	tol := 1e-16
 	if n != o.Dim {
 		return false
 	}
 	for r := 0; r < n; r++ {
 		for c := 0; c < n; c++ {
 			diff := math.Abs(a.Data[r][c] - o.Data[r][c])
-			if diff > 1e-6 {
+			if diff > tol {
 				return false
 			}
 		}
@@ -93,6 +102,7 @@ func (a *Matrix) Equals(o *Matrix) bool {
 	return true
 }
 
+// Print prints the matrix in a tabular format.
 func (a *Matrix) Print() {
 	for i := 0; i < a.Dim; i++ {
 		for j := 0; j < a.Dim; j++ {
@@ -102,6 +112,8 @@ func (a *Matrix) Print() {
 	}
 }
 
+// Printf prints the matrix in a formatted style.
+// The output can be used in https://www.wolframalpha.com inverse matrix calculator.
 func (a *Matrix) Printf() {
 	fmt.Print("{")
 	for i := 0; i < a.Dim; i++ {
