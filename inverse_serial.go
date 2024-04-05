@@ -13,32 +13,19 @@ func InverseSerial(m *Matrix) (*Matrix, time.Duration, error) {
 	startTime := time.Now()
 
 	for i := 0; i < n; i++ {
-		if m.Data[i][i] == 0 {
-			for j := i; j < n; j++ {
-				if m.Data[j][i] != 0 {
-					m.Swap(i, j)
-					break
-				}
-				if j == n-1 {
-					return nil, time.Since(startTime), ErrSingularMatrix
-				}
-			}
+		err := assertNonZeroPivot(m, I, i)
+		if err != nil {
+			panic(err)
 		}
 
 		pivot := m.Data[i][i]
-
-		for c := 0; c < n; c++ {
-			m.Data[i][c] /= pivot
-			I.Data[i][c] /= pivot
-		}
+		normalizeRow(m.Data[i], pivot)
+		normalizeRow(I.Data[i], pivot)
 
 		if i < n-1 {
 			for r := i + 1; r < n; r++ {
 				factor := m.Data[r][i]
-				for c := 0; c < n; c++ {
-					m.Data[r][c] -= factor * m.Data[i][c]
-					I.Data[r][c] -= factor * I.Data[i][c]
-				}
+				subtractRows(m.Data[r], m.Data[i], factor)
 			}
 		}
 	}
@@ -46,10 +33,7 @@ func InverseSerial(m *Matrix) (*Matrix, time.Duration, error) {
 	for i := n - 1; i >= 1; i-- {
 		for r := i - 1; r >= 0; r-- {
 			factor := m.Data[r][i]
-			for c := 0; c < n; c++ {
-				m.Data[r][c] -= factor * m.Data[i][c]
-				I.Data[r][c] -= factor * I.Data[i][c]
-			}
+			subtractRows(m.Data[r], m.Data[i], factor)
 		}
 	}
 

@@ -96,7 +96,7 @@ func (m *Matrix) Equals(o *Matrix) bool {
 func (m *Matrix) Print() {
 	for i := 0; i < m.Dim; i++ {
 		for j := 0; j < m.Dim; j++ {
-			fmt.Printf("%f ", m.Data[i][j])
+			fmt.Printf("%11f", m.Data[i][j])
 		}
 		fmt.Println()
 	}
