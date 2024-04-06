@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-func InverseSerial(a *Matrix) (*Matrix, time.Duration, error) {
+func InverseSerial(a *Matrix) (*Matrix, time.Duration) {
 	n := a.Dim
 
 	I := NewMatrix(n)
@@ -39,5 +39,5 @@ func InverseSerial(a *Matrix) (*Matrix, time.Duration, error) {
 		}
 	}
 
-	return I, time.Since(startTime), nil
+	return I, time.Since(startTime)
 }

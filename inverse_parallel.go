@@ -1,11 +1,14 @@
 package gjeinverse
 
 import (
+	"runtime"
 	"sync"
 	"time"
 )
 
-func InverseParallel(a *Matrix, threads int) (*Matrix, time.Duration, error) {
+func InverseParallel(a *Matrix, threads int) (*Matrix, time.Duration) {
+	runtime.GOMAXPROCS(threads)
+
 	n := a.Dim
 
 	I := NewMatrix(n)
@@ -52,5 +55,5 @@ func InverseParallel(a *Matrix, threads int) (*Matrix, time.Duration, error) {
 		wg.Wait()
 	}
 
-	return I, time.Since(startTime), nil
+	return I, time.Since(startTime)
 }

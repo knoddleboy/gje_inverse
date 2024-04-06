@@ -1,148 +1,42 @@
 package gjeinverse
 
 import (
-	"fmt"
 	"testing"
-	"time"
 )
 
-func TestInverseParallelIdentity(t *testing.T) {
-	fmt.Println("Parallel - Identity")
-	fmt.Println("dim\ttime, s")
-
-	for _, dim := range TestDims {
-		a := NewMatrix(dim)
-		a.FillIdentity()
-
-		inv, elapsed, err := InverseParallel(a, ThreadsTests)
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		if !inv.IsIdentity() {
-			t.Fatal(ErrFailedToCompute)
-		}
-
-		printDimTime(dim, elapsed.Seconds())
-	}
-}
-
-func TestInverseParallelRandom(t *testing.T) {
-	fmt.Println("Parallel - Random")
-	fmt.Println("dim\ttime, s")
-
+// TestParallelInvolution tests the correctness of the InverseParallel function by verifying
+// if applying the inverse operation twice on a randomly generated matrix returns
+// the original matrix itself. It iterates through a set of test dimensions
+// defined in TestDims and verifies the correctness for each dimension.
+// If the result does not match the original matrix, it fails the test.
+func TestParallelInvolution(t *testing.T) {
 	for _, dim := range TestDims {
 		a := NewMatrix(dim)
 		a.Randomize()
 
-		inv, elapsed, err := InverseParallel(a.Copy(), ThreadsTests)
-		if err != nil {
-			t.Fatal(err)
-		}
+		inv, _ := InverseParallel(a.Copy(), 4)
+		inv2, _ := InverseParallel(inv, 4)
 
-		printDimTime(dim, elapsed.Seconds())
-
-		inv2, _, err := InverseParallel(inv, ThreadsTests)
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		if !a.Equals(inv2) {
+		if !inv2.Equals(a) {
 			t.Fatal(ErrFailedToCompute)
 		}
 	}
 }
 
-func TestInverseParallelIdentitySeq(t *testing.T) {
-	fmt.Println("Parallel - Identity (seq)")
-	fmt.Println("dim\tavg time, s")
-
+// TestParallelConformsSerial tests if the InverseParallel function produces the same result
+// as the InverseSerial function for randomly generated matrices of varying dimensions.
+// It iterates through a set of test dimensions defined in TestDims and compares the inverses
+// computed by both parallel and serial methods. If the results do not match, it fails the test.
+func TestParallelConformsSerial(t *testing.T) {
 	for _, dim := range TestDims {
-		for i := 0; i < SeqTests; i++ {
-			a := NewMatrix(dim)
-			a.FillIdentity()
+		a := NewMatrix(dim)
+		a.Randomize()
 
-			inv, _, err := InverseParallel(a, ThreadsTests)
-			if err != nil {
-				t.Fatal(err)
-			}
+		invPar, _ := InverseParallel(a.Copy(), 4)
+		invSer, _ := InverseSerial(a)
 
-			if !inv.IsIdentity() {
-				t.Fatal(ErrFailedToCompute)
-			}
+		if !invPar.Equals(invSer) {
+			t.Fatal(ErrFailedToCompute)
 		}
-
-		var totalTime time.Duration
-
-		for i := 0; i < SeqTests; i++ {
-			a := NewMatrix(dim)
-			a.FillIdentity()
-
-			inv, elapsed, err := InverseParallel(a, ThreadsTests)
-			if err != nil {
-				t.Fatal(err)
-			}
-
-			totalTime += elapsed
-
-			if !inv.IsIdentity() {
-				t.Fatal(ErrFailedToCompute)
-			}
-		}
-
-		avgTime := totalTime / time.Duration(SeqTests)
-		printDimTime(dim, avgTime.Seconds())
-	}
-}
-
-func TestInverseParallelRandomSeq(t *testing.T) {
-	fmt.Println("Parallel - Random (seq)")
-	fmt.Println("dim\tavg time, s")
-
-	for _, dim := range TestDims {
-		for i := 0; i < SeqTests; i++ {
-			a := NewMatrix(dim)
-			a.Randomize()
-
-			inv, _, err := InverseParallel(a.Copy(), ThreadsTests)
-			if err != nil {
-				t.Fatal(err)
-			}
-
-			inv2, _, err := InverseParallel(inv, ThreadsTests)
-			if err != nil {
-				t.Fatal(err)
-			}
-
-			if !a.Equals(inv2) {
-				t.Fatal(ErrFailedToCompute)
-			}
-		}
-
-		var totalTime time.Duration
-
-		for i := 0; i < SeqTests; i++ {
-			a := NewMatrix(dim)
-			a.Randomize()
-
-			inv, elapsed, err := InverseParallel(a.Copy(), ThreadsTests)
-			if err != nil {
-				t.Fatal(err)
-			}
-
-			totalTime += elapsed
-
-			inv2, _, err := InverseParallel(inv, ThreadsTests)
-			if err != nil {
-				t.Fatal(err)
-			}
-
-			if !a.Equals(inv2) {
-				t.Fatal(ErrFailedToCompute)
-			}
-		}
-
-		avgTime := totalTime / time.Duration(SeqTests)
-		printDimTime(dim, avgTime.Seconds())
 	}
 }

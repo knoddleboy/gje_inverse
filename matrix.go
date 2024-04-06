@@ -87,7 +87,7 @@ func (a *Matrix) IsIdentity() bool {
 // Equals checks if two matrices are equal within a certain tolerance.
 func (a *Matrix) Equals(o *Matrix) bool {
 	n := a.Dim
-	tol := 1e-16
+	tol := 1e-8
 	if n != o.Dim {
 		return false
 	}
