@@ -22,3 +22,27 @@ func TestSerialInvolution(t *testing.T) {
 		}
 	}
 }
+
+// TestSerialDeterministic tests the deterministic behavior of the InverseSerial function.
+// It computes randomly generated matrix's inverses serially. Then it verifies that the
+// computed inverses are equal pairwise, ensuring the deterministic nature of the computation.
+func TestSerialDeterministic(t *testing.T) {
+	for _, dim := range TestDims {
+		a := NewMatrix(dim)
+		a.Randomize()
+
+		inv1, _ := InverseSerial(a.Copy())
+		inv2, _ := InverseSerial(a.Copy())
+		inv3, _ := InverseSerial(a.Copy())
+
+		if !inv1.Equals(inv2) {
+			t.Fatal(ErrFailedToCompute)
+		}
+		if !inv2.Equals(inv3) {
+			t.Fatal(ErrFailedToCompute)
+		}
+		if !inv1.Equals(inv3) {
+			t.Fatal(ErrFailedToCompute)
+		}
+	}
+}
