@@ -5,11 +5,10 @@ import (
 	"testing"
 )
 
-// TestParallelInvolution tests the correctness of the InverseParallel function by verifying
-// if applying the inverse operation twice on a randomly generated matrix returns
-// the original matrix itself. It iterates through a set of test dimensions
-// defined in TestDims and verifies the correctness for each dimension.
-// If the result does not match the original matrix, it fails the test.
+// TestParallelInvolution tests the correctness of the InverseParallel function by
+// verifying if applying the inverse operation twice on a randomly generated matrix
+// returns the original matrix itself. If the result does not match the original
+// matrix, it fails the test.
 func TestParallelInvolution(t *testing.T) {
 	for _, dim := range TestDims {
 		a := NewMatrix(dim)
