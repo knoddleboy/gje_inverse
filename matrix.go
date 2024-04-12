@@ -36,6 +36,21 @@ func (a *Matrix) Randomize() {
 	}
 }
 
+// FillDiagonal fills the diagonal elements of the Matrix with values
+// equal to their respective row index plus one, while setting all
+// non-diagonal elements to zero.
+func (a *Matrix) FillDiagonal() {
+	for i := 0; i < a.Dim; i++ {
+		for j := 0; j < a.Dim; j++ {
+			if i == j {
+				a.Data[i][j] = float64(i + 1)
+			} else {
+				a.Data[i][j] = 0
+			}
+		}
+	}
+}
+
 // FillIdentity fills the matrix as an identity matrix.
 func (a *Matrix) FillIdentity() {
 	for i := 0; i < a.Dim; i++ {
